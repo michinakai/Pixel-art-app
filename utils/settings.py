@@ -2,6 +2,7 @@ import pygame
 pygame.init()
 pygame.font.init()
 
+
 #colours
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -11,20 +12,22 @@ GREEN = (0, 0, 255)
 GREY = (127, 127, 127)
 
 
-FPS = 60 
+FPS = 250 
 
 #size of window
-WIDTH, HEIGHT = 600, 700
+WIDTH, HEIGHT = 800, 900
 
-ROWS = COLS = 50
+
+#canvas settings
+ROWS = COLS = 32
 
 TOOLBAR_HEIGHT = HEIGHT - WIDTH
 
-PIXEL_SIZE = WIDTH // COLS
+PIXEL_SIZE = 16
 
-BG_COLOR = WHITE
+BG_COLOR = GREY
 
-DRAW_GRID_LINES = True
+DRAW_GRID_LINES = False
 
 
 
