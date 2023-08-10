@@ -13,9 +13,22 @@ canvas = pygame.Surface((PIXEL_SIZE * COLS, PIXEL_SIZE * ROWS), pygame.SRCALPHA)
 canvas_color = canvas.fill(WHITE)
 canvas_w = canvas.get_width()
 canvas_h = canvas.get_height()
-canvas_pos = canvas_x, canvas_y = 50, 30
+canvas_pos = (canvas_x, canvas_y) = (50, 30)
 
+half_w = canvas_w / 2
+half_h = canvas_h / 2
 
+bg_canvas = pygame.Surface((2,2))
+
+def canvas_bg():
+    pygame.draw.rect(WIN, BLACK, pygame.Rect((canvas_x - 3), (canvas_y - 3), (canvas_w + 6), (canvas_h + 6)), 3)
+
+    for x in range(bg_canvas.get_width()):
+        for y in range(bg_canvas.get_height()):
+            bg_canvas.set_at([x, y], CANVAS_CLR_1 if (x + y) % 2 == 0 else CANVAS_CLR_2)
+    WIN.blit(pygame.transform.scale(bg_canvas, (canvas_w, canvas_h)), (canvas_x, canvas_y))
+
+    
 def init_grid(rows, cols, color):
     grid = []
 
@@ -41,8 +54,9 @@ def draw_grid(canvas, grid):
 
 def draw(win, grid, buttons):
     win.fill(BG_COLOR)
-    win.blit(canvas, (canvas_x, canvas_y))
     # draw_background
+    canvas_bg()
+    win.blit(canvas, (canvas_x, canvas_y))
     draw_grid(canvas, grid)
 
     for button in buttons:
@@ -61,8 +75,10 @@ def get_row_col_from_pos(pos):
 
 button_y = HEIGHT - TOOLBAR_HEIGHT/2 -25
 buttons = [
-    Button(3500, button_y, 50, 50, TRANSPARENCY)
+    Button(500, button_y, 50, 50, TRANSPARENCY, "Eraser", WHITE),
+    Button(450, button_y, 50, 50, brush_color, "Brush", WHITE)
 ]
+
 
 def clr_buttons():
     button_pos_x = 50
@@ -77,9 +93,6 @@ clr_buttons()
 run = True
 clock = pygame.time.Clock()
 grid = init_grid(ROWS, COLS, TRANSPARENCY)
-drawing_color = BLACK
-
-
 
 #main loop
 while run:
@@ -88,21 +101,35 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
         
         if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()
-  
-            try:
-                row, col = get_row_col_from_pos(pos)
-                grid[row][col] = drawing_color
-            except IndexError:
-                for button in buttons:
-                    if not button.clicked(pos):
-                        continue
+            
+        
+            if pos > canvas_pos and tool == brush:
+                try:
+                    row, col = get_row_col_from_pos(pos)
+                    grid[row][col] = brush_color                     
+                except IndexError:
+                    for button in buttons:
+                        if not button.clicked(pos):
+                            continue
+                        
+                        brush_color = button.color
+                        break
 
-                    drawing_color = button.color
-                    break
-
+                        
+            if pos > canvas_pos and tool == eraser:            
+                try:
+                    row, col = get_row_col_from_pos(pos)
+                    grid[row][col] = ERASER_CLR
+                except IndexError:
+                    for button in buttons:
+                        if not button.clicked(pos):
+                            continue
+                      
+                        break            
     draw(WIN, grid, buttons)
 
 
