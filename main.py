@@ -1,17 +1,20 @@
 from utils import *
+from colours import *
 
+#Window
+WIN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE | pygame.SRCALPHA)
 
-WIN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+#Custom window icon
 icon = pygame.image.load('riceprite-icon.png')
 pygame.display.set_caption("Riceprite")
 pygame.display.set_icon(icon)
 
-canvas = pygame.Surface((PIXEL_SIZE * COLS, PIXEL_SIZE * ROWS))
+canvas = pygame.Surface((PIXEL_SIZE * COLS, PIXEL_SIZE * ROWS), pygame.SRCALPHA)
 canvas_color = canvas.fill(WHITE)
 canvas_w = canvas.get_width()
 canvas_h = canvas.get_height()
-
 canvas_pos = canvas_x, canvas_y = 50, 30
+
 
 def init_grid(rows, cols, color):
     grid = []
@@ -39,6 +42,7 @@ def draw_grid(canvas, grid):
 def draw(win, grid, buttons):
     win.fill(BG_COLOR)
     win.blit(canvas, (canvas_x, canvas_y))
+    # draw_background
     draw_grid(canvas, grid)
 
     for button in buttons:
@@ -55,19 +59,29 @@ def get_row_col_from_pos(pos):
 
     return row, col
 
+button_y = HEIGHT - TOOLBAR_HEIGHT/2 -25
+buttons = [
+    Button(3500, button_y, 50, 50, TRANSPARENCY)
+]
 
+def clr_buttons():
+    button_pos_x = 50
+    colours = 0
+    for i in range(palette_w):
+        buttons.append(Button(button_pos_x, button_y, 25, 50, palette[colours]))
+        button_pos_x = button_pos_x + 20
+        colours = colours + 1
+
+clr_buttons()
 
 run = True
 clock = pygame.time.Clock()
-grid = init_grid(ROWS, COLS, WHITE)
+grid = init_grid(ROWS, COLS, TRANSPARENCY)
 drawing_color = BLACK
 
-button_y = HEIGHT - TOOLBAR_HEIGHT/2 -25
-buttons = [
-    Button(10, button_y, 50, 50, RED)
-]
 
-#main game loop
+
+#main loop
 while run:
     clock.tick(FPS)
 

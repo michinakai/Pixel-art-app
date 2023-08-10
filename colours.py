@@ -12,7 +12,7 @@ for i in range(palette_w):
     x = x + 1
     palette.append([r, g, b])
 
-print(palette[1][2])
+#print(palette[1][2])
 
 
 
