@@ -1,5 +1,5 @@
 from utils import *
-from colours import *
+import keyboard
 
 #Window
 WIN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE | pygame.SRCALPHA)
@@ -13,7 +13,7 @@ canvas = pygame.Surface((PIXEL_SIZE * COLS, PIXEL_SIZE * ROWS), pygame.SRCALPHA)
 canvas_color = canvas.fill(WHITE)
 canvas_w = canvas.get_width()
 canvas_h = canvas.get_height()
-canvas_pos = (canvas_x, canvas_y) = (50, 30)
+(canvas_x, canvas_y) = (50, 30)
 
 half_w = canvas_w / 2
 half_h = canvas_h / 2
@@ -88,11 +88,35 @@ def clr_buttons():
         button_pos_x = button_pos_x + 20
         colours = colours + 1
 
-clr_buttons()
+def hotkey():
+    global tool
+    global brush_size
+    if keyboard.is_pressed('e') and tool == brush:
+        tool = eraser
+    if keyboard.is_pressed('b') and tool == eraser:
+        tool = brush
+
+    if keyboard.is_pressed('='):
+        brush_size = brush_size + 1
+    if keyboard.is_pressed('-'):
+        brush_size = brush_size - 1
+    
+def brushsize():
+
+    if brush_size == 1:
+        grid[row][col] = brush_color
+    
+    if brush_size == 2:
+        grid[row][col] = brush_color
+        grid[row - 1][col] = brush_color
+        grid[row][col - 1] = brush_color
+        grid[row - 1][col - 1] = brush_color
 
 run = True
 clock = pygame.time.Clock()
 grid = init_grid(ROWS, COLS, TRANSPARENCY)
+
+clr_buttons()
 
 #main loop
 while run:
@@ -105,22 +129,28 @@ while run:
         
         if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()
-            
         
-            if pos > canvas_pos and tool == brush:
+            if pos[0] > canvas_x and pos[1] > canvas_y and tool == brush:
                 try:
                     row, col = get_row_col_from_pos(pos)
-                    grid[row][col] = brush_color                     
+                    brushsize()                
                 except IndexError:
                     for button in buttons:
                         if not button.clicked(pos):
                             continue
-                        
-                        brush_color = button.color
+
+                        if button.text == "Brush":
+                            brush_color = previous_brush_color
+                        else:
+                            previous_brush_color = brush_color
+                            brush_color = button.color
+
+                        if button.text == "Eraser":
+                            tool = eraser
                         break
 
                         
-            if pos > canvas_pos and tool == eraser:            
+            if pos[0] > canvas_x and pos[1] > canvas_y and tool == eraser:            
                 try:
                     row, col = get_row_col_from_pos(pos)
                     grid[row][col] = ERASER_CLR
@@ -128,9 +158,14 @@ while run:
                     for button in buttons:
                         if not button.clicked(pos):
                             continue
+
+                        if button.text == "Brush":
+                            tool = eraser
                       
                         break            
     draw(WIN, grid, buttons)
+    hotkey()
+    
 
 
 pygame.quit()

@@ -1,5 +1,6 @@
 import pygame
-from colours import palette
+import keyboard
+from utils.colours import palette
 pygame.init()
 pygame.font.init()
 
@@ -20,10 +21,13 @@ CANVAS_CLR_2 = (194, 192, 192)
 
 
 #tools
-brush = brush_color = palette[0]
+brush = palette[0]
+brush_color = brush
+previous_brush_color = brush_color
 eraser = ERASER_CLR
 tool = brush
 
+brush_size = 1
 
 FPS = 250 
 
@@ -47,3 +51,4 @@ DRAW_GRID_LINES = False
 
 def getfont(size):
     return pygame.font.SysFont("Minecraft", size)
+
