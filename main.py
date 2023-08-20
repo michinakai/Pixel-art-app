@@ -53,11 +53,17 @@ def draw_grid(canvas, grid):
             pygame.draw.line(canvas, BLACK, (i * PIXEL_SIZE, 0), (i * PIXEL_SIZE, canvas_h - TOOLBAR_HEIGHT))
 
 def draw(win, grid, buttons):
+    x = brush_size
+    text_font = font(15)
+
     win.fill(BG_COLOR)
     # draw_background
     canvas_bg()
     win.blit(canvas, (canvas_x, canvas_y))
     draw_grid(canvas, grid)
+    brush_size_text = text_font.render(f'Brush size: {x}', True, WHITE)
+    win.blit(brush_size_text, (450, 800))
+
 
     for button in buttons:
         button.draw(win)
@@ -96,21 +102,42 @@ def hotkey():
     if keyboard.is_pressed('b') and tool == eraser:
         tool = brush
 
-    if keyboard.is_pressed('='):
-        brush_size = brush_size + 1
-    if keyboard.is_pressed('-'):
-        brush_size = brush_size - 1
-    
 def brushsize():
-
-    if brush_size == 1:
+    row, col = get_row_col_from_pos(pos)
+    
+    #brush sizes
+    if brush_size == 1 and tool == brush:
         grid[row][col] = brush_color
     
-    if brush_size == 2:
+    if brush_size == 2 and tool == brush:
         grid[row][col] = brush_color
-        grid[row - 1][col] = brush_color
-        grid[row][col - 1] = brush_color
-        grid[row - 1][col - 1] = brush_color
+        grid[row-1][col] = brush_color
+        grid[row][col-1] = brush_color
+        grid[row-1][col-1] = brush_color
+
+    if brush_size == 3 and tool == brush:
+        grid[row][col] = brush_color
+        grid[row-1][col] = brush_color
+        grid[row][col-1] = brush_color
+        grid[row+1][col] = brush_color
+        grid[row][col+1] = brush_color
+
+    #eraser sizes
+    if brush_size == 1 and tool == eraser:
+        grid[row][col] = eraser_color
+    
+    if brush_size == 2 and tool == eraser:
+        grid[row][col] = eraser_color
+        grid[row-1][col] = eraser_color
+        grid[row][col-1] = eraser_color
+        grid[row-1][col-1] = eraser_color
+
+    if brush_size == 3 and tool == eraser:
+        grid[row][col] = eraser_color
+        grid[row-1][col] = eraser_color
+        grid[row][col-1] = eraser_color
+        grid[row+1][col] = eraser_color
+        grid[row][col+1] = eraser_color
 
 run = True
 clock = pygame.time.Clock()
@@ -121,18 +148,20 @@ clr_buttons()
 #main loop
 while run:
     clock.tick(FPS)
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.KEYUP:
+                if event.key == pygame.K_EQUALS and brush_size < 3:
+                    brush_size = brush_size + 1
+                if event.key == pygame.K_MINUS and brush_size > 1:
+                    brush_size = brush_size - 1
 
-        
         if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()
         
             if pos[0] > canvas_x and pos[1] > canvas_y and tool == brush:
                 try:
-                    row, col = get_row_col_from_pos(pos)
                     brushsize()                
                 except IndexError:
                     for button in buttons:
@@ -152,8 +181,7 @@ while run:
                         
             if pos[0] > canvas_x and pos[1] > canvas_y and tool == eraser:            
                 try:
-                    row, col = get_row_col_from_pos(pos)
-                    grid[row][col] = ERASER_CLR
+                    brushsize()
                 except IndexError:
                     for button in buttons:
                         if not button.clicked(pos):

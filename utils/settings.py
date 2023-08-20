@@ -14,8 +14,6 @@ BLUE = (0, 255, 0)
 GREEN = (0, 0, 255)
 GREY = (38 , 38, 38)
 
-ERASER_CLR = TRANSPARENCY
-
 CANVAS_CLR_1 = (129, 128, 128)
 CANVAS_CLR_2 = (194, 192, 192)
 
@@ -24,7 +22,8 @@ CANVAS_CLR_2 = (194, 192, 192)
 brush = palette[0]
 brush_color = brush
 previous_brush_color = brush_color
-eraser = ERASER_CLR
+eraser_color = TRANSPARENCY
+eraser = eraser_color
 tool = brush
 
 brush_size = 1
@@ -49,6 +48,6 @@ DRAW_GRID_LINES = False
 
 
 
-def getfont(size):
+def font(size):
     return pygame.font.SysFont("Minecraft", size)
 
