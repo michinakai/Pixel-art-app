@@ -9,6 +9,7 @@ icon = pygame.image.load('riceprite-icon.png')
 pygame.display.set_caption("Riceprite")
 pygame.display.set_icon(icon)
 
+
 canvas = pygame.Surface((PIXEL_SIZE * COLS, PIXEL_SIZE * ROWS), pygame.SRCALPHA)
 canvas_color = canvas.fill(WHITE)
 canvas_w = canvas.get_width()
@@ -74,25 +75,30 @@ def get_row_col_from_pos(pos):
     row = (y - canvas_y)  // PIXEL_SIZE
     col = (x - canvas_x) // PIXEL_SIZE
 
-    if row >= ROWS:
+    if row >= ROWS or col >= COLS or row <= canvas_y or col <= canvas_x:
         raise IndexError
 
     return row, col
 
 button_y = HEIGHT - TOOLBAR_HEIGHT/2 -25
 buttons = [
-    Button(500, button_y, 50, 50, TRANSPARENCY, "Eraser", WHITE),
-    Button(450, button_y, 50, 50, brush_color, "Brush", WHITE)
+    Button(5, 30, 50, 50, TRANSPARENCY, "Eraser", WHITE),
+    Button(5, 80, 50, 50, brush_color, "Brush", WHITE)
 ]
 
 
-def clr_buttons():
-    button_pos_x = 50
+def colour_buttons():
+    button_pos_x = 570
+    button_pos_y = 28
     colours = 0
-    for i in range(palette_w):
-        buttons.append(Button(button_pos_x, button_y, 25, 50, palette[colours]))
-        button_pos_x = button_pos_x + 20
-        colours = colours + 1
+    colour_palette_width = int(palette_w / 8)
+    for i in range(colour_palette_width):
+        for i in range(8):
+            buttons.append(Button(button_pos_x, button_pos_y, 30, 30, palette[colours]))
+            button_pos_x = button_pos_x + 29
+            colours = colours + 1
+        button_pos_x = 570
+        button_pos_y = button_pos_y + 29
 
 def hotkey():
     global tool
@@ -143,7 +149,7 @@ run = True
 clock = pygame.time.Clock()
 grid = init_grid(ROWS, COLS, TRANSPARENCY)
 
-clr_buttons()
+colour_buttons()
 
 #main loop
 while run:
@@ -188,9 +194,9 @@ while run:
                             continue
 
                         if button.text == "Brush":
-                            tool = eraser
+                            tool = brush
                       
-                        break            
+                        break           
     draw(WIN, grid, buttons)
     hotkey()
     

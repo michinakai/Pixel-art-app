@@ -31,7 +31,7 @@ brush_size = 1
 FPS = 250 
 
 #size of window
-WIDTH, HEIGHT = 800, 900
+WIDTH, HEIGHT = 830, 900
 
 
 #canvas settings
@@ -45,7 +45,9 @@ BG_COLOR = GREY
 
 DRAW_GRID_LINES = False
 
-
+#Button images
+brush_img = pygame.image.load('brush.png')
+eraser_img = pygame.image.load('eraser.png')
 
 
 def font(size):

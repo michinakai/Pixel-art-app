@@ -2,9 +2,9 @@ from PIL import Image
 
 palette = []
 
-clr_palette = Image.open('sweetie-16-1x.png')
-rgb_palette = clr_palette.convert('RGB')
-palette_w = clr_palette.width
+colour_palette = Image.open('resurrect-64-1x.png')
+rgb_palette = colour_palette.convert('RGB')
+palette_w = colour_palette.width
 x = 0
 
 for i in range(palette_w):
