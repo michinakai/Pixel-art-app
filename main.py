@@ -1,5 +1,8 @@
 from utils import *
+from PIL import Image
 import keyboard
+import os
+
 
 #Window
 WIN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE | pygame.SRCALPHA)
@@ -72,22 +75,22 @@ def draw(win, grid, buttons):
 
 def get_row_col_from_pos(pos):
     x, y = pos
-    row = (y - canvas_y)  // PIXEL_SIZE
-    col = (x - canvas_x) // PIXEL_SIZE
+    row = (y)  // PIXEL_SIZE
+    col = (x) // PIXEL_SIZE
 
-    if row >= ROWS or col >= COLS or row <= canvas_y or col <= canvas_x:
+    if row >= ROWS or col >= COLS:
         raise IndexError
 
     return row, col
 
 button_y = HEIGHT - TOOLBAR_HEIGHT/2 -25
 buttons = [
-    Button(5, 30, 50, 50, TRANSPARENCY, "Eraser", WHITE),
-    Button(5, 80, 50, 50, brush_color, "Brush", WHITE)
+    Button(30, button_y, 50, 50, TRANSPARENCY, "Eraser", WHITE),
+    Button(80, button_y, 50, 50, brush_color, "Brush", WHITE)
 ]
 
 
-def colour_buttons():
+def draw_colour_button():
     button_pos_x = 570
     button_pos_y = 28
     colours = 0
@@ -99,6 +102,7 @@ def colour_buttons():
             colours = colours + 1
         button_pos_x = 570
         button_pos_y = button_pos_y + 29
+    
 
 def hotkey():
     global tool
@@ -107,6 +111,7 @@ def hotkey():
         tool = eraser
     if keyboard.is_pressed('b') and tool == eraser:
         tool = brush
+
 
 def brushsize():
     row, col = get_row_col_from_pos(pos)
@@ -149,11 +154,13 @@ run = True
 clock = pygame.time.Clock()
 grid = init_grid(ROWS, COLS, TRANSPARENCY)
 
-colour_buttons()
+draw_colour_button()
 
 #main loop
 while run:
     clock.tick(FPS)
+    
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -162,7 +169,30 @@ while run:
                     brush_size = brush_size + 1
                 if event.key == pygame.K_MINUS and brush_size > 1:
                     brush_size = brush_size - 1
-
+                if event.key == pygame.K_1:
+                    palette_num = 0
+                    palette.clear()
+                    colour_palette = Image.open(f"palettes/{palette_list[palette_num]}")
+                    rgb_palette = colour_palette.convert('RGB')
+                    palette_w = colour_palette.width
+                    colour_list()
+                    draw_colour_button()
+                if event.key == pygame.K_2:
+                    palette_num = 1
+                    palette.clear()
+                    colour_palette = Image.open(f"palettes/{palette_list[palette_num]}")
+                    rgb_palette = colour_palette.convert('RGB')
+                    palette_w = colour_palette.width
+                    colour_list()
+                    draw_colour_button()
+                if event.key == pygame.K_3:
+                    palette_num = 2
+                    palette.clear()
+                    colour_palette = Image.open(f"palettes/{palette_list[palette_num]}")
+                    rgb_palette = colour_palette.convert('RGB')
+                    palette_w = colour_palette.width
+                    colour_list()
+                    draw_colour_button()
         if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()
         
@@ -199,6 +229,7 @@ while run:
                         break           
     draw(WIN, grid, buttons)
     hotkey()
+
     
 
 

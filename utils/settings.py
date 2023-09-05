@@ -1,6 +1,6 @@
 import pygame
 import keyboard
-from utils.colours import palette
+from utils.colours import *
 pygame.init()
 pygame.font.init()
 
