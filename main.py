@@ -2,7 +2,7 @@ from utils import *
 from PIL import Image
 import keyboard
 import os
-
+import math
 
 #Window
 WIN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE | pygame.SRCALPHA)
@@ -17,7 +17,7 @@ canvas = pygame.Surface((PIXEL_SIZE * COLS, PIXEL_SIZE * ROWS), pygame.SRCALPHA)
 canvas_color = canvas.fill(WHITE)
 canvas_w = canvas.get_width()
 canvas_h = canvas.get_height()
-(canvas_x, canvas_y) = (50, 30)
+(canvas_x, canvas_y) = (50, 50)
 
 half_w = canvas_w / 2
 half_h = canvas_h / 2
@@ -66,7 +66,7 @@ def draw(win, grid, buttons):
     win.blit(canvas, (canvas_x, canvas_y))
     draw_grid(canvas, grid)
     brush_size_text = text_font.render(f'Brush size: {x}', True, WHITE)
-    win.blit(brush_size_text, (450, 800))
+    win.blit(brush_size_text, (160, 600))
 
 
     for button in buttons:
@@ -75,8 +75,8 @@ def draw(win, grid, buttons):
 
 def get_row_col_from_pos(pos):
     x, y = pos
-    row = (y)  // PIXEL_SIZE
-    col = (x) // PIXEL_SIZE
+    row = (y - canvas_x)  // PIXEL_SIZE
+    col = (x - canvas_y) // PIXEL_SIZE
 
     if row >= ROWS or col >= COLS:
         raise IndexError
@@ -85,24 +85,39 @@ def get_row_col_from_pos(pos):
 
 button_y = HEIGHT - TOOLBAR_HEIGHT/2 -25
 buttons = [
-    Button(30, button_y, 50, 50, TRANSPARENCY, "Eraser", WHITE),
-    Button(80, button_y, 50, 50, brush_color, "Brush", WHITE)
+    Button(48, 585, 50, 50, TRANSPARENCY, "eraser.png"),
+    Button(98, 585, 50, 50, brush_color,"brush.png")
 ]
 
 
 def draw_colour_button():
     button_pos_x = 570
-    button_pos_y = 28
+    button_pos_y = 46
     colours = 0
-    colour_palette_width = int(palette_w / 8)
+    colour_palette_width = int((palette_w // 8))
+
     for i in range(colour_palette_width):
         for i in range(8):
             buttons.append(Button(button_pos_x, button_pos_y, 30, 30, palette[colours]))
             button_pos_x = button_pos_x + 29
-            colours = colours + 1
+            if colours < (palette_w - 1):
+                colours = colours + 1
         button_pos_x = 570
         button_pos_y = button_pos_y + 29
-    
+        
+    extra_row = 0
+
+    if palette_w % 8 != 0:
+        extra_row = 1
+
+    if extra_row == 1:
+        button_pos_x = 570
+        for i in range(palette_w - (colour_palette_width * 8)):
+            buttons.append(Button(button_pos_x, button_pos_y, 30, 30, palette[colours]))
+            button_pos_x = button_pos_x + 29
+            if colours < (palette_w - 1):
+                colours = colours + 1
+    print(colours)
 
 def hotkey():
     global tool
@@ -154,12 +169,12 @@ run = True
 clock = pygame.time.Clock()
 grid = init_grid(ROWS, COLS, TRANSPARENCY)
 
+colour_list()
 draw_colour_button()
 
 #main loop
 while run:
     clock.tick(FPS)
-    
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -167,32 +182,46 @@ while run:
         if event.type == pygame.KEYUP:
                 if event.key == pygame.K_EQUALS and brush_size < 3:
                     brush_size = brush_size + 1
+                    
                 if event.key == pygame.K_MINUS and brush_size > 1:
                     brush_size = brush_size - 1
+
                 if event.key == pygame.K_1:
                     palette_num = 0
                     palette.clear()
-                    colour_palette = Image.open(f"palettes/{palette_list[palette_num]}")
+                    colour_palette = Image.open(f".\palettes\{palette_list[palette_num]}")
                     rgb_palette = colour_palette.convert('RGB')
                     palette_w = colour_palette.width
                     colour_list()
                     draw_colour_button()
+                    for button in buttons:
+                        button.draw(WIN)
+                    pygame.display.update()
+                    
                 if event.key == pygame.K_2:
                     palette_num = 1
                     palette.clear()
-                    colour_palette = Image.open(f"palettes/{palette_list[palette_num]}")
+                    colour_palette = Image.open(f".\palettes\{palette_list[palette_num]}")
                     rgb_palette = colour_palette.convert('RGB')
                     palette_w = colour_palette.width
                     colour_list()
                     draw_colour_button()
+                    for button in buttons:
+                        button.draw(WIN)
+                    pygame.display.update()
+                    
                 if event.key == pygame.K_3:
                     palette_num = 2
                     palette.clear()
-                    colour_palette = Image.open(f"palettes/{palette_list[palette_num]}")
+                    colour_palette = Image.open(f".\palettes\{palette_list[palette_num]}")
                     rgb_palette = colour_palette.convert('RGB')
                     palette_w = colour_palette.width
                     colour_list()
                     draw_colour_button()
+                    for button in buttons:
+                        button.draw(WIN)
+                    pygame.display.update()
+                    
         if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()
         
@@ -204,13 +233,13 @@ while run:
                         if not button.clicked(pos):
                             continue
 
-                        if button.text == "Brush":
+                        if button.img == "brush.png":
                             brush_color = previous_brush_color
                         else:
                             previous_brush_color = brush_color
                             brush_color = button.color
 
-                        if button.text == "Eraser":
+                        if button.img == "eraser.png":
                             tool = eraser
                         break
 
@@ -223,13 +252,13 @@ while run:
                         if not button.clicked(pos):
                             continue
 
-                        if button.text == "Brush":
+                        if button.img == "brush.png":
                             tool = brush
                       
                         break           
     draw(WIN, grid, buttons)
     hotkey()
-
+    
     
 
 
