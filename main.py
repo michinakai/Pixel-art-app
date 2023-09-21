@@ -13,7 +13,7 @@ icon = pygame.image.load('riceprite-icon.png')
 pygame.display.set_caption("Riceprite")
 pygame.display.set_icon(icon)
 
-
+#Canvas variables
 canvas = pygame.Surface((PIXEL_SIZE * COLS, PIXEL_SIZE * ROWS), pygame.SRCALPHA)
 canvas_color = canvas.fill(WHITE)
 canvas_w = canvas.get_width()
@@ -25,6 +25,7 @@ half_h = canvas_h / 2
 
 bg_canvas = pygame.Surface((2,2))
 
+#Creates different coloured squares for background of the canvas
 def canvas_bg():
     pygame.draw.rect(WIN, BLACK, pygame.Rect((canvas_x - 3), (canvas_y - 3), 
                                              (canvas_w + 6), (canvas_h + 6)), 3)
@@ -36,7 +37,7 @@ def canvas_bg():
     WIN.blit(pygame.transform.scale(bg_canvas, (canvas_w, canvas_h)), 
              (canvas_x, canvas_y))
 
-    
+#initiates grid   
 def init_grid(rows, cols, color):
     grid = []
 
@@ -47,6 +48,7 @@ def init_grid(rows, cols, color):
 
     return grid        
 
+#draws the grid
 def draw_grid(canvas, grid):
     for i, row in enumerate(grid):
         for j, pixel in enumerate(row):
@@ -63,23 +65,23 @@ def draw_grid(canvas, grid):
             pygame.draw.line(canvas, BLACK, (i * PIXEL_SIZE, 0), 
                              (i * PIXEL_SIZE, canvas_h - TOOLBAR_HEIGHT))
 
+#Function to render everything
 def draw(win, grid, buttons):
     x = brush_size
     text_font = font(15)
 
     win.fill(BG_COLOR)
-    # draw_background
     canvas_bg()
     win.blit(canvas, (canvas_x, canvas_y))
     draw_grid(canvas, grid)
     brush_size_text = text_font.render(f'Brush size: {x}', True, WHITE)
     win.blit(brush_size_text, (160, 600))
 
-
     for button in buttons:
         button.draw(win)
     pygame.display.update()
 
+#Gets the pixel that needs ti be filled 
 def get_row_col_from_pos(pos):
     x, y = pos
     row = (y - canvas_x)  // PIXEL_SIZE
@@ -90,13 +92,13 @@ def get_row_col_from_pos(pos):
 
     return row, col
 
-button_y = HEIGHT - TOOLBAR_HEIGHT/2 -25
+#List to contain the buttons
 buttons = [
     Button(48, 585, 50, 50, TRANSPARENCY, "eraser.png"),
     Button(98, 585, 50, 50, brush_color,"brush.png")
 ]
 
-
+#A loop which goes through the imported colour palette and make buttons
 def draw_colour_button():
     button_pos_x = 570
     button_pos_y = 46
@@ -112,7 +114,8 @@ def draw_colour_button():
                 colours = colours + 1
         button_pos_x = 570
         button_pos_y = button_pos_y + 29
-        
+
+    #Draws the remaining colours if colour palette is not divisible by 8    
     extra_row = 0
 
     if palette_w % 8 != 0:
@@ -127,7 +130,7 @@ def draw_colour_button():
             if colours < (palette_w - 1):
                 colours = colours + 1
     
-
+#Keyboard shortcut to switch tools
 def hotkey():
     global tool
     global brush_size
@@ -136,7 +139,7 @@ def hotkey():
     if keyboard.is_pressed('b') and tool == eraser:
         tool = brush
 
-
+#Draws the lines or erases based on brush size
 def brushsize():
     row, col = get_row_col_from_pos(pos)
     
@@ -188,6 +191,8 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        #Make the brush size only increase or decrease by 1 when releasing the 
+        # key and set boundary for brush sizes
         if event.type == pygame.KEYUP:
                 if event.key == pygame.K_EQUALS and brush_size < 3:
                     brush_size = brush_size + 1
@@ -195,9 +200,11 @@ while run:
                 if event.key == pygame.K_MINUS and brush_size > 1:
                     brush_size = brush_size - 1
 
+        #Run this if mouse is clicked
         if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()
-        
+
+            #Only draw if on the canvas, if not, check if a button was pressed
             if pos[0] > canvas_x and pos[1] > canvas_y and tool == brush:
                 try:
                     brushsize()                
@@ -205,18 +212,20 @@ while run:
                     for button in buttons:
                         if not button.clicked(pos):
                             continue
-
+                        
+                        #Keeps the brushes previous colour
                         if button.img == "brush.png":
                             brush_color = previous_brush_color
                         else:
                             previous_brush_color = brush_color
                             brush_color = button.color
 
+                        #Switches tools if eraser button is pressed
                         if button.img == "eraser.png":
                             tool = eraser
                         break
 
-                        
+            #Only erase if on the canvas, if not, check if a button was pressed            
             if pos[0] > canvas_x and pos[1] > canvas_y and tool == eraser:            
                 try:
                     brushsize()
@@ -224,7 +233,8 @@ while run:
                     for button in buttons:
                         if not button.clicked(pos):
                             continue
-
+                        
+                        #Switches tools if brush button is pressed
                         if button.img == "brush.png":
                             tool = brush
                       
