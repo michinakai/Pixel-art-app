@@ -94,13 +94,13 @@ def get_row_col_from_pos(pos):
 
 #List to contain the buttons
 buttons = [
-    Button(48, 585, 50, 50, TRANSPARENCY, "eraser.png"),
-    Button(98, 585, 50, 50, brush_color,"brush.png")
+    Button(48, canvas_h + 60, 50, 50, TRANSPARENCY, "eraser.png"),
+    Button(98, canvas_h + 60, 50, 50, brush_color,"brush.png")
 ]
 
 #A loop which goes through the imported colour palette and make buttons
 def draw_colour_button():
-    button_pos_x = 570
+    button_pos_x = canvas_w + 60
     button_pos_y = 46
     colours = 0
     colour_palette_width = int((palette_w // 8))
@@ -112,7 +112,7 @@ def draw_colour_button():
             button_pos_x = button_pos_x + 29
             if colours < (palette_w - 1):
                 colours = colours + 1
-        button_pos_x = 570
+        button_pos_x = canvas_w + 60
         button_pos_y = button_pos_y + 29
 
     #Draws the remaining colours if colour palette is not divisible by 8    
@@ -122,7 +122,7 @@ def draw_colour_button():
         extra_row = 1
 
     if extra_row == 1:
-        button_pos_x = 570
+        button_pos_x = canvas_w + 60
         for i in range(palette_w - (colour_palette_width * 8)):
             buttons.append(Button(button_pos_x, button_pos_y, 30, 30, 
                                   palette[colours]))

@@ -5,6 +5,8 @@ pygame.init()
 pygame.font.init()
 
 
+FPS = 250 
+
 #colours
 TRANSPARENCY = (0, 0, 0, 0)
 WHITE = (255, 255, 255)
@@ -18,7 +20,7 @@ CANVAS_CLR_1 = (129, 128, 128)
 CANVAS_CLR_2 = (194, 192, 192)
 
 
-#tools
+#tool variables
 brush = palette[0]
 brush_color = brush
 previous_brush_color = brush_color
@@ -27,8 +29,6 @@ eraser = eraser_color
 tool = brush
 
 brush_size = 1
-
-FPS = 250 
 
 #size of window
 WIDTH, HEIGHT = 830, 900
@@ -49,7 +49,7 @@ DRAW_GRID_LINES = False
 brush_img = pygame.image.load('brush.png')
 eraser_img = pygame.image.load('eraser.png')
 
-
+#Changes text font
 def font(size):
     return pygame.font.SysFont("Minecraft", size)
 
