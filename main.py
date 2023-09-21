@@ -5,7 +5,8 @@ import os
 import math
 
 #Window
-WIN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE | pygame.SRCALPHA)
+WIN = pygame.display.set_mode((WIDTH, HEIGHT), 
+                              pygame.RESIZABLE | pygame.SRCALPHA)
 
 #Custom window icon
 icon = pygame.image.load('riceprite-icon.png')
@@ -25,12 +26,15 @@ half_h = canvas_h / 2
 bg_canvas = pygame.Surface((2,2))
 
 def canvas_bg():
-    pygame.draw.rect(WIN, BLACK, pygame.Rect((canvas_x - 3), (canvas_y - 3), (canvas_w + 6), (canvas_h + 6)), 3)
+    pygame.draw.rect(WIN, BLACK, pygame.Rect((canvas_x - 3), (canvas_y - 3), 
+                                             (canvas_w + 6), (canvas_h + 6)), 3)
 
     for x in range(bg_canvas.get_width()):
         for y in range(bg_canvas.get_height()):
-            bg_canvas.set_at([x, y], CANVAS_CLR_1 if (x + y) % 2 == 0 else CANVAS_CLR_2)
-    WIN.blit(pygame.transform.scale(bg_canvas, (canvas_w, canvas_h)), (canvas_x, canvas_y))
+            bg_canvas.set_at([x, y], CANVAS_CLR_1 if (x + y) % 2 == 0 
+                             else CANVAS_CLR_2)
+    WIN.blit(pygame.transform.scale(bg_canvas, (canvas_w, canvas_h)), 
+             (canvas_x, canvas_y))
 
     
 def init_grid(rows, cols, color):
@@ -46,15 +50,18 @@ def init_grid(rows, cols, color):
 def draw_grid(canvas, grid):
     for i, row in enumerate(grid):
         for j, pixel in enumerate(row):
-            pygame.draw.rect(canvas, pixel, (j * PIXEL_SIZE, i * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE))
+            pygame.draw.rect(canvas, pixel, 
+                    (j * PIXEL_SIZE, i * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE))
 
 #If the draw grid line setting is set to true draw grid line
     if DRAW_GRID_LINES:
         for i in range(ROWS + 1):
-            pygame.draw.line(canvas, BLACK, (0, i * PIXEL_SIZE), (canvas_w, i * PIXEL_SIZE))
+            pygame.draw.line(canvas, BLACK, (0, i * PIXEL_SIZE), 
+                             (canvas_w, i * PIXEL_SIZE))
 
         for i in range(COLS + 1):
-            pygame.draw.line(canvas, BLACK, (i * PIXEL_SIZE, 0), (i * PIXEL_SIZE, canvas_h - TOOLBAR_HEIGHT))
+            pygame.draw.line(canvas, BLACK, (i * PIXEL_SIZE, 0), 
+                             (i * PIXEL_SIZE, canvas_h - TOOLBAR_HEIGHT))
 
 def draw(win, grid, buttons):
     x = brush_size
@@ -98,7 +105,8 @@ def draw_colour_button():
 
     for i in range(colour_palette_width):
         for i in range(8):
-            buttons.append(Button(button_pos_x, button_pos_y, 30, 30, palette[colours]))
+            buttons.append(Button(button_pos_x, button_pos_y, 30, 30, 
+                                  palette[colours]))
             button_pos_x = button_pos_x + 29
             if colours < (palette_w - 1):
                 colours = colours + 1
@@ -113,11 +121,12 @@ def draw_colour_button():
     if extra_row == 1:
         button_pos_x = 570
         for i in range(palette_w - (colour_palette_width * 8)):
-            buttons.append(Button(button_pos_x, button_pos_y, 30, 30, palette[colours]))
+            buttons.append(Button(button_pos_x, button_pos_y, 30, 30, 
+                                  palette[colours]))
             button_pos_x = button_pos_x + 29
             if colours < (palette_w - 1):
                 colours = colours + 1
-    print(colours)
+    
 
 def hotkey():
     global tool
@@ -186,42 +195,6 @@ while run:
                 if event.key == pygame.K_MINUS and brush_size > 1:
                     brush_size = brush_size - 1
 
-                if event.key == pygame.K_1:
-                    palette_num = 0
-                    palette.clear()
-                    colour_palette = Image.open(f".\palettes\{palette_list[palette_num]}")
-                    rgb_palette = colour_palette.convert('RGB')
-                    palette_w = colour_palette.width
-                    colour_list()
-                    draw_colour_button()
-                    for button in buttons:
-                        button.draw(WIN)
-                    pygame.display.update()
-                    
-                if event.key == pygame.K_2:
-                    palette_num = 1
-                    palette.clear()
-                    colour_palette = Image.open(f".\palettes\{palette_list[palette_num]}")
-                    rgb_palette = colour_palette.convert('RGB')
-                    palette_w = colour_palette.width
-                    colour_list()
-                    draw_colour_button()
-                    for button in buttons:
-                        button.draw(WIN)
-                    pygame.display.update()
-                    
-                if event.key == pygame.K_3:
-                    palette_num = 2
-                    palette.clear()
-                    colour_palette = Image.open(f".\palettes\{palette_list[palette_num]}")
-                    rgb_palette = colour_palette.convert('RGB')
-                    palette_w = colour_palette.width
-                    colour_list()
-                    draw_colour_button()
-                    for button in buttons:
-                        button.draw(WIN)
-                    pygame.display.update()
-                    
         if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()
         
